@@ -1,7 +1,7 @@
 /* First of all - create a d3 chart */
 
-const w = 600,
-      h = 600
+const w = window.innerWidth
+const h = window.innerHeight
 
 const svg = d3.select('body')
   .append('svg')
@@ -84,3 +84,26 @@ channel
   .bind('pusher:member_added', add)
   .bind('pusher:member_removed', remove)
   .bind('pusher:subscription_succeeded', members => members.each(add))
+
+
+/* Extras, not covered in blog post */
+
+// handle page resize events
+window.addEventListener('resize', () => {
+  const w = window.innerWidth
+  const h = window.innerHeight
+
+  svg
+    .attr('width', w)
+    .attr('height', h)
+
+  force
+    .size([w,h])
+    .start()
+
+}, false)
+
+// colour the heading of the page to the current subscription
+channel.bind('pusher:subscription_succeeded', success => {
+  d3.select('h1').style('border-color', success.me.info.color)
+})
